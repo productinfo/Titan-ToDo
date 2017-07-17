@@ -36,9 +36,8 @@ struct ToDoManager {
         return result
     }
     
-    func read() -> [String: Any]? {
+    func read() -> [[String: Any]]? {
         
-        var returnValue = [String: Any]()
         var items = [[String: Any]]()
         
         do {
@@ -47,16 +46,15 @@ struct ToDoManager {
                 
                 for row in result.rows() {
                     
-                    dump(row)
-                    
-                    //Items MUST have an ID AND a title
-                    if let id = row["id"] as? Int, let title = row["title"] as? String {
+                    // Items MUST have an ID AND json data that was originally stored form the initial post request
+                    // JSON data should have at least a "title" in it
+                    if let id = row["id"] as? Int, let data = row["data"] as? [String: Any?] {
                         
-                        var item = [String: Any]()
+                        //Copy item data for injection
+                        var item = data
                         
+                        //Inject row id into item
                         item["id"] = id
-                        item["title"] = title
-                    
                         items.append(item)
                     }
                 }
@@ -65,13 +63,7 @@ struct ToDoManager {
             return nil
         }
         
-        if !items.isEmpty {
-            returnValue["items"] = items
-        }
-        
-        dump(returnValue)
-        
-        return returnValue
+        return items
         
     }
     
