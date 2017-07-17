@@ -17,6 +17,21 @@ struct PSQL {
     
     typealias PSQLCompletion = (RopeResult) -> Void
     
+    func query(_ query: String) throws {
+        
+        let creds = RopeCredentials(host: "localhost", port: 5432,  dbName: "todo",
+                                    user: "dev", password: "dev")
+        
+        // establish connection using the struct, returns nil on error
+        guard let db = try? Rope.connect(credentials: creds) else {
+            throw DBError.ConnectionError
+        }
+        
+        guard let _ = try? db.query(query) else {
+            throw DBError.QueryError
+        }
+    }
+    
     func query(_ query: String, params: [Any]) throws {
         
         let creds = RopeCredentials(host: "localhost", port: 5432,  dbName: "todo",
