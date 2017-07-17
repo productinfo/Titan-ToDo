@@ -10,17 +10,23 @@ import Rope
 
 struct ToDoManager {
     
-    func add(json: String) -> Bool {
+    func add(json: String) -> Int? {
         
-        var result = true
+        var id: Int? = nil
         
         do {
-            try PSQL().query("INSERT INTO items (data) VALUES ($1)", params: [json])
+            try PSQL().query("INSERT INTO items (data) VALUES ($1) RETURNING id", params: [json]) {
+                result in
+                
+                for row in result.rows() {
+                    id = row["id"] as? Int
+                }
+            }
         } catch {
-            result = false
+            return nil
         }
         
-        return result
+        return id
     }
     
     func delete() -> Bool {
@@ -48,7 +54,7 @@ struct ToDoManager {
                     
                     // Items MUST have an ID, json data that was originally stored form the initial post request, and completed value
                     // JSON data should have at least a "title" in it
-                    if let id = row["id"] as? Int, let data = row["data"] as? [String: Any?], let completed = row["completed"] as? Bool {
+                    if let id = row["id"] as? Int, let data = row["data"] as? [String: Any], let completed = row["completed"] as? Bool {
                         
                         //Copy item data for injection
                         var item = data
@@ -56,6 +62,7 @@ struct ToDoManager {
                         // Inject row id into item
                         item["id"] = id
                         item["completed"] = completed
+                        item["url"] = "/item/\(id)/"
                         
                         items.append(item)
                     }
@@ -66,6 +73,26 @@ struct ToDoManager {
         }
         
         return items
+        
+    }
+    
+    func getLastInsertedId() -> Int? {
+        
+        var id: Int? = nil
+        
+        do {
+            try PSQL().query("SELECT currval('items_id_seq')") {
+                result in
+                
+                for row in result.rows() {
+                    
+                }
+            }
+        } catch {
+            return nil
+        }
+        
+        return id
         
     }
     

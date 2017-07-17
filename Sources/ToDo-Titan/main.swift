@@ -14,13 +14,10 @@ app.get("/") { req, _ in
     if let dict = jsonRepresentation {
         //Our query ran successfully, we should ahve at least an empty array to work with
         
-        dump(dict)
-        
         do {
             let json = try JSONSerialization.data(withJSONObject: dict, options: .prettyPrinted)
             if let jsonString = String(data: json, encoding: .utf8) {
                 response = jsonString
-                print(response)
             }
             
         } catch {
@@ -46,8 +43,8 @@ app.post("/") { req, _ in
     var success = true
     
     //Add to Database, Check for Success
-    if !ToDoManager().add(json: json) {
-        return(req, Response(400))
+    if let id = ToDoManager().add(json: json) {
+        dict["url"] = "/item/\(id)/"
     }
     
     dict["success"] = true
