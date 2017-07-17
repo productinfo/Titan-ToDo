@@ -1,37 +1,54 @@
 import Titan
 import TitanKituraAdapter
+import TitanCORS
+import Foundation
 
 let app = Titan()
 
-/// Hello World, req is sent to next matching route
+/// Default Route
 app.get("/") { req, _ in
     return (req, Response(200, "Hello World"))
 }
 
-/// 2 parameters in URL
-app.delete("/item/*/subitem/*") { req, param1, param2, _ in
-    let text = "I will delete \(param2) in \(param1)"
-    return(req, Response(200, text))
-}
-
-/// parse JSON sent via POST, return 400 on parsing error
-app.post("/data") { req, _ in
-    guard let json = req.json as? [String: Any] else {
+/// Accept New ToDo Items
+app.post("/") { req, _ in
+    
+    //Validate JSON
+    guard let dict = req.json as? [String: Any] else {
         return (req, Response(400))
     }
-    return(req, Response(200, "I received \(json)"))
+    
+    //Get String Representations to Store in Postgres
+    let json = req.body
+    
+    var success = true
+    
+    //Add to Database, Check for Success
+    if !ToDoManager().add(json: json) {
+        return(req, Response(400))
+    }
+    
+    if let title = dict["title"] {
+        let response = "{ \"success\": \"\(success)\", \"title\": \"\(title)\"}"
+        print(response)
+        return(req, Response(200, response, [Header(name: "Content-Type", value: "application/json")]))
+    }
+    
+    //If all checks fail, return bad request
+    return(req, Response(400))
+    
 }
 
-/// let’s manipulate the response of all GET routes
-/// and yes, that is already a simple example for a middleware!
-app.get("*") { req, res in
-    var newRes = res.copy()  // res is a constant, so we need to copy
-    newRes.body += " and hello from the middleware!"
-    return (req, newRes)  // will return "Hello World and hello from the middleware!"
+/// Delete the ToDos
+app.delete("/") { req, _ in
+    
+    
+    
+    //If delete fails, return a server error
+    return(req, Response(500))
 }
 
-/// a quick in-line middleware function to optionally set 404 response code
-/// can be used by other routes / functions
+/// Handle 404 Errors
 func send404IfNoMatch(req: RequestType, res: ResponseType) -> (RequestType, ResponseType) {
     var res = res.copy()
     if res.code < 200 {
@@ -43,6 +60,12 @@ func send404IfNoMatch(req: RequestType, res: ResponseType) -> (RequestType, Resp
 
 /// use the 404 middleware on all routes and request methods
 app.addFunction(send404IfNoMatch)
+
+/// Allow All CORS for API Testing
+/// Ensure that you're sending back:
+///  - an `access-control-allow-origin: *` header for all requests
+///  - an `access-control-allow-headers` header which lists headers such as "Content-Type"
+addInsecureCORSSupport(app)
 
 // start the Kitura webserver on port 8000
 TitanKituraAdapter.serve(app.app, on: 8000)
