@@ -7,7 +7,29 @@ let app = Titan()
 
 /// Default Route
 app.get("/") { req, _ in
-    return (req, Response(200, "Hello World"))
+//    let jsonRepresentation = ToDoManager().read()
+    
+    var response = ""
+    
+//    if let dict = jsonRepresentation {
+//        //Our query ran successfully, we should ahve at least an empty array to work with
+//        
+//        dump(dict)
+//        
+//        do {
+//            let json = try JSONSerialization.data(withJSONObject: dict, options: .prettyPrinted)
+//            if let jsonString = String(data: json, encoding: .utf8) {
+//                response = jsonString
+//                print(response)
+//            }
+//            
+//        } catch {
+//            return (req, Response(500))
+//        }
+//    }
+    
+    //Something Failed On Our End, Send Back an Error
+    return (req, Response(200, response, [Header(name: "Content-Type", value: "application/json")]))
 }
 
 /// Accept New ToDo Items
@@ -30,7 +52,6 @@ app.post("/") { req, _ in
     
     if let title = dict["title"] {
         let response = "{ \"success\": \"\(success)\", \"title\": \"\(title)\"}"
-        print(response)
         return(req, Response(200, response, [Header(name: "Content-Type", value: "application/json")]))
     }
     
@@ -42,7 +63,9 @@ app.post("/") { req, _ in
 /// Delete the ToDos
 app.delete("/") { req, _ in
     
-    
+    if ToDoManager().delete() {
+        return(req, Response(200))
+    }
     
     //If delete fails, return a server error
     return(req, Response(500))
