@@ -7,26 +7,26 @@ let app = Titan()
 
 /// Default Route
 app.get("/") { req, _ in
-//    let jsonRepresentation = ToDoManager().read()
+    let jsonRepresentation = ToDoManager().read()
     
-    var response = ""
+    var response = "{ }"
     
-//    if let dict = jsonRepresentation {
-//        //Our query ran successfully, we should ahve at least an empty array to work with
-//        
-//        dump(dict)
-//        
-//        do {
-//            let json = try JSONSerialization.data(withJSONObject: dict, options: .prettyPrinted)
-//            if let jsonString = String(data: json, encoding: .utf8) {
-//                response = jsonString
-//                print(response)
-//            }
-//            
-//        } catch {
-//            return (req, Response(500))
-//        }
-//    }
+    if let dict = jsonRepresentation {
+        //Our query ran successfully, we should ahve at least an empty array to work with
+        
+        dump(dict)
+        
+        do {
+            let json = try JSONSerialization.data(withJSONObject: dict, options: .prettyPrinted)
+            if let jsonString = String(data: json, encoding: .utf8) {
+                response = jsonString
+                print(response)
+            }
+            
+        } catch {
+            return (req, Response(500))
+        }
+    }
     
     //Something Failed On Our End, Send Back an Error
     return (req, Response(200, response, [Header(name: "Content-Type", value: "application/json")]))
