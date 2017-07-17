@@ -7,7 +7,7 @@ let app = Titan()
 
 /// Default Route
 app.get("/") { req, _ in
-    let jsonRepresentation = ToDoManager().read()
+    let jsonRepresentation = ToDoManager().getAll()
     
     var response = "{ }"
     
@@ -36,7 +36,7 @@ app.get("/") { req, _ in
 app.post("/") { req, _ in
     
     //Validate JSON
-    guard let dict = req.json as? [String: Any] else {
+    guard var dict = req.json as? [String: Any] else {
         return (req, Response(400))
     }
     
@@ -50,14 +50,17 @@ app.post("/") { req, _ in
         return(req, Response(400))
     }
     
-    if let title = dict["title"] {
-        let response = "{ \"success\": \"\(success)\", \"title\": \"\(title)\"}"
-        return(req, Response(200, response, [Header(name: "Content-Type", value: "application/json")]))
+    dict["success"] = true
+    dict["completed"] = false
+
+    if let data = try? JSONSerialization.data(withJSONObject: dict, options: .prettyPrinted) {
+        if let response = String(data: data, encoding: .utf8) {
+            return(req, Response(200, response, [Header(name: "Content-Type", value: "application/json")]))
+        }
     }
     
-    //If all checks fail, return bad request
-    return(req, Response(400))
-    
+    //Bad json was sent to us, tell them it's a bad request
+    return (req, Response(400))
 }
 
 /// Delete the ToDos
