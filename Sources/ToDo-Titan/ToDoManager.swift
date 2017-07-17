@@ -76,24 +76,4 @@ struct ToDoManager {
         
     }
     
-    func getLastInsertedId() -> Int? {
-        
-        var id: Int? = nil
-        
-        do {
-            try PSQL().query("SELECT currval('items_id_seq')") {
-                result in
-                
-                for row in result.rows() {
-                    
-                }
-            }
-        } catch {
-            return nil
-        }
-        
-        return id
-        
-    }
-    
 }
