@@ -28,7 +28,7 @@ struct ToDoManager {
         var result = true
         
         do  {
-            try PSQL().query("DELETE FROM items", params: nil)
+            try PSQL().query("DELETE FROM items", params: [])
         } catch {
             result = false
         }
