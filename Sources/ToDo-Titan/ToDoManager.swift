@@ -54,14 +54,12 @@ struct ToDoManager {
                     
                     // Items MUST have an ID, json data that was originally stored form the initial post request, and completed value
                     // JSON data should have at least a "title" in it
-                    if let id = row["id"] as? Int, let data = row["data"] as? [String: Any], let completed = row["completed"] as? Bool {
+                    if let id = row["id"] as? Int, let data = row["data"] as? [String: Any] {
                         
                         //Copy item data for injection
                         var item = data
                         
-                        // Inject row id into item
-                        item["id"] = id
-                        item["completed"] = completed
+                        // Inject id based url into item to send as JSON
                         item["url"] = "http://localhost:8000/item/\(id)/"
                         
                         items.append(item)
@@ -88,14 +86,12 @@ struct ToDoManager {
                     
                     // Items MUST have an ID, json data that was originally stored form the initial post request, and completed value
                     // JSON data should have at least a "title" in it
-                    if let id = row["id"] as? Int, let data = row["data"] as? [String: Any], let completed = row["completed"] as? Bool {
+                    if let id = row["id"] as? Int, let data = row["data"] as? [String: Any] {
                         
                         //Copy item data for injection
                         var item = data
                         
-                        // Inject row id into item
-                        item["id"] = id
-                        item["completed"] = completed
+                        // Inject id based url into item to send as JSON
                         item["url"] = "http://localhost:8000/item/\(id)/"
                         
                         json = item
@@ -107,6 +103,29 @@ struct ToDoManager {
         }
         
         return json
+    }
+    
+    func updateItem(forID id: Int, title: String? = nil, completed: Bool? = nil, order: Int? = nil) -> Bool {
+        
+        var success = false
+        
+        if let originalItem = getItem(forID: id) {
+            var newItem = originalItem
+            
+            if let newTitle = title {
+                newItem["title"] = newTitle
+            }
+            
+            if let newStatus = completed {
+                newItem["completed"] = newStatus
+            }
+            
+            if let newOrder = order {
+                newItem["order"] = newOrder
+            }
+        }
+        
+        return success
     }
     
 }
