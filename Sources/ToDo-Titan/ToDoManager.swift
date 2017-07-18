@@ -30,7 +30,7 @@ struct ToDoManager {
         return id
     }
     
-    func delete() -> Bool {
+    func deleteAll() -> Bool {
         
         var result = true
         

@@ -76,7 +76,7 @@ struct Router {
         /// Delete the ToDos
         app.delete("/") { req, _ in
             
-            if ToDoManager().delete() {
+            if ToDoManager().deleteAll() {
                 return(req, Response(200))
             }
             
