@@ -106,5 +106,62 @@ struct Router {
             //Placeholder
             return(req, Response(400))
         }
+        
+        // Update Individual Item
+        app.patch("/item/*") {
+            req, param, _ in
+            
+            // Validate JSON (This will fail if the request body cannot convert)
+            guard var dict = req.json as? [String: Any] else {
+                // Bad json was sent to us, tell them it's a bad request
+                return (req, Response(400))
+            }
+            
+            // Make sure we have a valid ID to update
+            if let id = Int(param) {
+                
+                if let originalItem = ToDoManager().getItem(forID: id) {
+                    var newItem = originalItem
+                    
+                    if let completed = dict["completed"] as? Bool {
+                        newItem["completed"] = completed
+                    }
+                    
+                    if let order = dict["order"] as? Int {
+                        newItem["order"] = order
+                    }
+                    
+                    if let title = dict["title"] as? String {
+                        newItem["title"] = title
+                    }
+                    
+                    let updatedItem = ToDoManager().updateItem(forID: id, withItem: newItem)
+                    
+                    if updatedItem.0 {
+                        return (req, Response(200, updatedItem.1, [Header(name: "Content-Type", value: "application/json")]))
+                    }
+                }
+                
+            }
+            
+            //We had invalid JSON or the URL ID was bad, yell at the requester
+            return(req, Response(400))
+        }
+        
+        app.delete("/item/*") {
+            req, param, _ in
+            
+            // Check for a valid ID to work with
+            if let id = Int(param) {
+                if ToDoManager().deleteItem(withID: id) {
+                    return(req, Response(200))
+                } else {
+                    return (req, Response(500))
+                }
+            }
+            
+            //We had an invalid URL ID, yell at the requester
+            return(req, Response(400))
+        }
     }
 }

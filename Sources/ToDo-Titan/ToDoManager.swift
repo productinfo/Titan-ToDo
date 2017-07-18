@@ -7,6 +7,7 @@
 //
 
 import Rope
+import Foundation
 
 struct ToDoManager {
     
@@ -105,27 +106,39 @@ struct ToDoManager {
         return json
     }
     
-    func updateItem(forID id: Int, title: String? = nil, completed: Bool? = nil, order: Int? = nil) -> Bool {
+    func updateItem(forID id: Int, withItem item: [String: Any]) -> (Bool, String) {
+        
+        var success = false
+        var jsonString = ""
+        
+        do {
+            let data = try JSONSerialization.data(withJSONObject: item, options: [])
+            if let json = String(data: data, encoding: .utf8) {
+                try PSQL().query("UPDATE items SET data = $1 WHERE id = $2", params: ["\(json)", "\(id)"])
+                success = true
+                jsonString = json
+            }
+        } catch {
+            success = false
+        }
+        print(jsonString)
+        return (success, jsonString)
+        
+    }
+    
+    func deleteItem(withID id: Int) -> Bool {
         
         var success = false
         
-        if let originalItem = getItem(forID: id) {
-            var newItem = originalItem
-            
-            if let newTitle = title {
-                newItem["title"] = newTitle
-            }
-            
-            if let newStatus = completed {
-                newItem["completed"] = newStatus
-            }
-            
-            if let newOrder = order {
-                newItem["order"] = newOrder
-            }
+        do {
+            try PSQL().query("DELETE FROM items WHERE id = $1", params: ["\(id)"])
+            success = true
+        } catch {
+            success = false
         }
         
         return success
+        
     }
     
 }
