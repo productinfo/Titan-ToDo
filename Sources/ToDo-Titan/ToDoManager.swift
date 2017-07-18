@@ -32,10 +32,11 @@ struct ToDoManager {
     
     func deleteAll() -> Bool {
         
-        var result = true
+        var result = false
         
         do  {
             try PSQL().query("DELETE FROM items")
+            result = true
         } catch {
             result = false
         }
@@ -53,11 +54,10 @@ struct ToDoManager {
                 
                 for row in result.rows() {
                     
-                    // Items MUST have an ID, json data that was originally stored form the initial post request, and completed value
-                    // JSON data should have at least a "title" in it
+                    // Items Table Contains ID & JSON Data
                     if let id = row["id"] as? Int, let data = row["data"] as? [String: Any] {
                         
-                        //Copy item data for injection
+                        //Copy item data for url injection
                         var item = data
                         
                         // Inject id based url into item to send as JSON
@@ -121,7 +121,7 @@ struct ToDoManager {
         } catch {
             success = false
         }
-        print(jsonString)
+        
         return (success, jsonString)
         
     }

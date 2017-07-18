@@ -14,11 +14,9 @@ struct Router {
         
         /// Default Route
         app.get("/") { req, _ in
-            let jsonRepresentation = ToDoManager().getAll()
             
-            if let dict = jsonRepresentation {
-                //Our query ran successfully, we should ahve at least an empty array to work with
-                
+            // Get an array of json objects representing all todo items in the database
+            if let dict = ToDoManager().getAll() {
                 do {
                     let json = try JSONSerialization.data(withJSONObject: dict, options: .prettyPrinted)
                     if let jsonString = String(data: json, encoding: .utf8) {
@@ -26,7 +24,7 @@ struct Router {
                     }
                     
                 } catch {
-                    //Something Failed On Our End, Send Back an Error
+                    // Converstion to JSON failed
                     return (req, Response(500))
                 }
             }
@@ -44,17 +42,26 @@ struct Router {
                 return (req, Response(400))
             }
             
-            // Default New ToDo to Not Completed
+            guard dict["title"] != nil else {
+                // This is not a valid todo item, which must at least contain a title
+                return (req, Response(400))
+            }
+            
+            // Default the New ToDo to Not Completed
             dict["completed"] = false
             
             // Get String Representations to Store in Postgres
             do {
                 let data = try JSONSerialization.data(withJSONObject: dict, options: .prettyPrinted)
                 if let json = String(data: data, encoding: .utf8) {
+                    
                     // Add to Database, Check for Success
                     if let id = ToDoManager().add(json: json) {
+                        
+                        // Prepare to return it by injecting a URL
                         dict["url"] = "http://34.229.61.202/item/\(id)/"
                         
+                        // Return the new object to the requester
                         if let data = try? JSONSerialization.data(withJSONObject: dict, options: .prettyPrinted) {
                             if let response = String(data: data, encoding: .utf8) {
                                 return(req, Response(200, response, [Header(name: "Content-Type", value: "application/json")]))
@@ -80,7 +87,7 @@ struct Router {
                 return(req, Response(200))
             }
             
-            // Delete Failed, Admit to Messing Up
+            // Delete Failed, Admit We Failed
             return(req, Response(500))
         }
         
@@ -104,7 +111,7 @@ struct Router {
                 
             }
             
-            //No Valid ID, Bad Request
+            //No Valid ID == Bad Request
             return(req, Response(400))
         }
         
@@ -138,6 +145,9 @@ struct Router {
                     
                     let updatedItem = ToDoManager().updateItem(forID: id, withItem: newItem)
                     
+                    // updatedIem is a touple containting (Bool, String)
+                    // the Bool represents the sucess of the update
+                    // if successful, the string is json that we can send back (the new item details)
                     if updatedItem.0 {
                         return (req, Response(200, updatedItem.1, [Header(name: "Content-Type", value: "application/json")]))
                     }
