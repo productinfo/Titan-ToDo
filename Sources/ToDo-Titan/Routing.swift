@@ -48,7 +48,7 @@ struct Router {
             
             //Add to Database, Check for Success
             if let id = ToDoManager().add(json: json) {
-                dict["url"] = "/item/\(id)/"
+                dict["url"] = "http://localhost:8000/item/\(id)/"
             }
             
             dict["success"] = true
@@ -73,6 +73,29 @@ struct Router {
             
             //If delete fails, return a server error
             return(req, Response(500))
+        }
+        
+        // Get Individual ToDo Items
+        app.get("/item/*") {
+            req, param, _ in
+            
+            //Get Item with ID
+            if let id = Int(param) {
+                if let dict = ToDoManager().getItem(forID: id) {
+                    do {
+                        let json = try JSONSerialization.data(withJSONObject: dict, options: .prettyPrinted)
+                        if let jsonString = String(data: json, encoding: .utf8) {
+                            return (req, Response(200, jsonString, [Header(name: "Content-Type", value: "application/json")]))
+                        }
+                    } catch {
+                        return(req, Response(500))
+                    }
+                }
+                
+            }
+            
+            //Placeholder
+            return(req, Response(400))
         }
     }
 }
