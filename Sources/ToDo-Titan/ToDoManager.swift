@@ -100,7 +100,7 @@ struct ToDoManager {
                 }
             }
         } catch {
-            return nil
+            json = nil
         }
         
         return json
