@@ -69,7 +69,7 @@ struct Router {
                 return (req, Response(500))
             }
             
-            // Something Went Wrong
+            // Something Really Went Wrong
             return (req, Response(500))
         }
         
@@ -80,7 +80,7 @@ struct Router {
                 return(req, Response(200))
             }
             
-            //If delete fails, return a server error
+            // Delete Failed, Admit to Messing Up
             return(req, Response(500))
         }
         
@@ -97,13 +97,14 @@ struct Router {
                             return (req, Response(200, jsonString, [Header(name: "Content-Type", value: "application/json")]))
                         }
                     } catch {
+                        // We messed up somewhere
                         return(req, Response(500))
                     }
                 }
                 
             }
             
-            //Placeholder
+            //No Valid ID, Bad Request
             return(req, Response(400))
         }
         
