@@ -12,7 +12,7 @@ import Foundation
 struct Router {
     func makeRoutes(_ app: Titan) {
         
-        /// Default Route
+        /// Default route returns all items
         app.get("/") { req, _ in
             
             // Get an array of json objects representing all todo items in the database
@@ -29,14 +29,14 @@ struct Router {
                 }
             }
             
-            //Something Failed On Our End, Send Back an Error
+            // We failed to get a dictionary with all items, send back an error
             return (req, Response(500))
         }
         
-        /// Accept New ToDo Items
+        
+        /// Accept New Items
         app.post("/") { req, _ in
             
-            // Validate JSON (This will fail if the request body cannot convert)
             guard var dict = req.json as? [String: Any] else {
                 // Bad json was sent to us, tell them it's a bad request
                 return (req, Response(400))
@@ -47,7 +47,7 @@ struct Router {
                 return (req, Response(400))
             }
             
-            // Default the New ToDo to Not Completed
+            // Default the new item as not completed
             dict["completed"] = false
             
             // Get String Representations to Store in Postgres
@@ -72,22 +72,23 @@ struct Router {
                 }
 
             } catch {
-                // Something Went Wrong
+                // Something went wrong
                 return (req, Response(500))
             }
             
-            // Something Really Went Wrong
+            // Something went wrong
             return (req, Response(500))
         }
         
-        /// Delete the ToDos
+        
+        /// Delete Everything
         app.delete("/") { req, _ in
             
             if ToDoManager().deleteAll() {
                 return(req, Response(200))
             }
             
-            // Delete Failed, Admit We Failed
+            // Delete failed, send server error
             return(req, Response(500))
         }
         
@@ -95,7 +96,6 @@ struct Router {
         app.get("/item/*") {
             req, param, _ in
             
-            //Get Item with ID
             if let id = Int(param) {
                 if let dict = ToDoManager().getItem(forID: id) {
                     do {
@@ -111,9 +111,10 @@ struct Router {
                 
             }
             
-            //No Valid ID == Bad Request
+            // We didn't get a valid item id, yell at the requester
             return(req, Response(400))
         }
+        
         
         // Update Individual Item
         app.patch("/item/*") {
@@ -159,6 +160,8 @@ struct Router {
             return(req, Response(400))
         }
         
+        
+        /// Delete Individual Item
         app.delete("/item/*") {
             req, param, _ in
             
