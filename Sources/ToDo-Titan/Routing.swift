@@ -53,7 +53,7 @@ struct Router {
                 if let json = String(data: data, encoding: .utf8) {
                     // Add to Database, Check for Success
                     if let id = ToDoManager().add(json: json) {
-                        dict["url"] = "http://localhost:8000/item/\(id)/"
+                        dict["url"] = "http://34.229.61.202/item/\(id)/"
                         
                         if let data = try? JSONSerialization.data(withJSONObject: dict, options: .prettyPrinted) {
                             if let response = String(data: data, encoding: .utf8) {

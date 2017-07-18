@@ -61,7 +61,7 @@ struct ToDoManager {
                         var item = data
                         
                         // Inject id based url into item to send as JSON
-                        item["url"] = "http://localhost:8000/item/\(id)/"
+                        item["url"] = "http://34.229.61.202/item/\(id)/"
                         
                         items.append(item)
                     }
@@ -93,7 +93,7 @@ struct ToDoManager {
                         var item = data
                         
                         // Inject id based url into item to send as JSON
-                        item["url"] = "http://localhost:8000/item/\(id)/"
+                        item["url"] = "http://34.229.61.202/item/\(id)/"
                         
                         json = item
                     }
