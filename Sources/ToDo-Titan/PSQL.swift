@@ -19,8 +19,8 @@ struct PSQL {
     
     func query(_ query: String) throws {
         
-        let creds = RopeCredentials(host: "localhost", port: 5432,  dbName: "todo",
-                                    user: "dev", password: "dev")
+        let creds = RopeCredentials(host: Config().endpoint, port: Config().port,  dbName: Config().database,
+                                    user: Config().username, password: Config().password)
         
         // establish connection using the struct, returns nil on error
         guard let db = try? Rope.connect(credentials: creds) else {
@@ -34,8 +34,8 @@ struct PSQL {
     
     func query(_ query: String, params: [Any]) throws {
         
-        let creds = RopeCredentials(host: "localhost", port: 5432,  dbName: "todo",
-                                    user: "dev", password: "dev")
+        let creds = RopeCredentials(host: Config().endpoint, port: Config().port,  dbName: Config().database,
+                                    user: Config().username, password: Config().password)
         
         // establish connection using the struct, returns nil on error
         guard let db = try? Rope.connect(credentials: creds) else {
@@ -49,8 +49,8 @@ struct PSQL {
     
     func query(_ query: String, completion: PSQLCompletion) throws {
         
-        let creds = RopeCredentials(host: "localhost", port: 5432,  dbName: "todo",
-                                    user: "dev", password: "dev")
+        let creds = RopeCredentials(host: Config().endpoint, port: Config().port,  dbName: Config().database,
+                                    user: Config().username, password: Config().password)
         
         // establish connection using the struct, returns nil on error
         guard let db = try? Rope.connect(credentials: creds) else {
@@ -67,8 +67,8 @@ struct PSQL {
     
     func query(_ query: String, params: [Any], comletion: PSQLCompletion) throws {
         
-        let creds = RopeCredentials(host: "localhost", port: 5432,  dbName: "todo",
-                                    user: "dev", password: "dev")
+        let creds = RopeCredentials(host: Config().endpoint, port: Config().port,  dbName: Config().database,
+                                    user: Config().username, password: Config().password)
         
         // establish connection using the struct, returns nil on error
         guard let db = try? Rope.connect(credentials: creds) else {
