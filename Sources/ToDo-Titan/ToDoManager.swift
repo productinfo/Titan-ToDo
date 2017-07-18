@@ -62,7 +62,7 @@ struct ToDoManager {
                         // Inject row id into item
                         item["id"] = id
                         item["completed"] = completed
-                        item["url"] = "/item/\(id)/"
+                        item["url"] = "http://localhost:8000/item/\(id)/"
                         
                         items.append(item)
                     }
@@ -96,7 +96,7 @@ struct ToDoManager {
                         // Inject row id into item
                         item["id"] = id
                         item["completed"] = completed
-                        item["url"] = "/item/\(id)/"
+                        item["url"] = "http://localhost:8000/item/\(id)/"
                         
                         json = item
                     }
