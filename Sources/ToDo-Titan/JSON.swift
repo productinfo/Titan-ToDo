@@ -7,6 +7,7 @@
 //
 
 import Foundation
+import Titan
 
 func makeJSONString(_ dict: Any) -> String? {
     
@@ -22,4 +23,12 @@ func makeJSONString(_ dict: Any) -> String? {
     }
     
     return json
+}
+
+func jsonDataResopnse(withRequest req: RequestType, jsonData: Any) -> (RequestType, ResponseType)? {
+    if let response = makeJSONString(jsonData) {
+        return (req, Response(200, response, [Header(name: "Content-Type", value: "application/json")]))
+    }
+    
+    return nil
 }

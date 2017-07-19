@@ -63,8 +63,8 @@ struct Router {
                     dict["url"] = "\(Config().hostname)/item/\(id)/"
                     
                     // Return the new object to the requester as json
-                    if let response = makeJSONString(dict) {
-                        return(req, Response(200, response, [Header(name: "Content-Type", value: "application/json")]))
+                    if let response = jsonDataResopnse(withRequest: req, jsonData: dict) {
+                        return response
                     }
                 }
                 
@@ -97,8 +97,8 @@ struct Router {
             
             if let id = Int(param) {
                 if let dict = ToDoManager().getItem(forID: id) {
-                    if let jsonString = makeJSONString(dict) {
-                        return (req, Response(200, jsonString, [Header(name: "Content-Type", value: "application/json")]))
+                    if let response = jsonDataResopnse(withRequest: req, jsonData: dict) {
+                        return response
                     }
                 }
                 
