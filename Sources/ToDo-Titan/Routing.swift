@@ -82,20 +82,14 @@ struct Router {
             
             if let id = Int(param) {
                 if let dict = ToDoManager().getItem(forID: id) {
-                    do {
-                        let json = try JSONSerialization.data(withJSONObject: dict, options: .prettyPrinted)
-                        if let jsonString = String(data: json, encoding: .utf8) {
-                            return (req, Response(200, jsonString, [Header(name: "Content-Type", value: "application/json")]))
-                        }
-                    } catch {
-                        // We messed up somewhere
-                        return(req, Response(500))
+                    if let jsonString = makeJSONString(dict) {
+                        return (req, Response(200, jsonString, [Header(name: "Content-Type", value: "application/json")]))
                     }
                 }
                 
             }
             
-            // We didn't get a valid item id, yell at the requester
+            // We didn't get a valid url parameter or item id to work with, yell at the requester
             return(req, Response(400))
         }
         
@@ -148,12 +142,10 @@ struct Router {
             if let id = Int(param) {
                 if ToDoManager().deleteItem(withID: id) {
                     return(req, Response(200))
-                } else {
-                    return (req, Response(500))
                 }
             }
             
-            //We had an invalid URL ID, yell at the requester
+            //We had an invalid parametr in the url or the id provided was not a valid item, yell at the requester
             return(req, Response(400))
         }
     }
