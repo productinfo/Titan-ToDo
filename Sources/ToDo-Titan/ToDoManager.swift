@@ -55,10 +55,7 @@ struct ToDoManager {
                 for row in result.rows() {
                     
                     // Items Table Contains ID & JSON Data
-                    if let id = row["id"] as? Int, let data = row["data"] as? [String: Any] {
-                        
-                        //Copy item data for url injection
-                        var item = data
+                    if let id = row["id"] as? Int, var item = row["data"] as? [String: Any] {
                         
                         // Inject id based url into item to send as JSON
                         item["url"] = "\(Config().hostname)/item/\(id)/"
