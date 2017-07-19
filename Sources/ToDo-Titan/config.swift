@@ -39,4 +39,10 @@ struct Config {
             return 5432
         }
     }
+    
+    var hostname: String {
+        get {
+            return "http://34.229.61.202"
+        }
+    }
 }

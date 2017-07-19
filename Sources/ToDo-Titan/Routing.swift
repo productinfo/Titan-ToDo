@@ -51,7 +51,7 @@ struct Router {
                 if let id = ToDoManager().add(json: json) {
                     
                     // Prepare to return it by injecting a URL with the new id
-                    dict["url"] = "http://34.229.61.202/item/\(id)/"
+                    dict["url"] = "\(Config().hostname)/item/\(id)/"
                     
                     // Return the new object to the requester as json
                     if let response = makeJSONString(dict) {
