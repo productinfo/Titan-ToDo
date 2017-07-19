@@ -17,15 +17,8 @@ struct Router {
             
             // Get an array of json objects representing all todo items in the database
             if let dict = ToDoManager().getAll() {
-                do {
-                    let json = try JSONSerialization.data(withJSONObject: dict, options: .prettyPrinted)
-                    if let jsonString = String(data: json, encoding: .utf8) {
-                        return (req, Response(200, jsonString, [Header(name: "Content-Type", value: "application/json")]))
-                    }
-                    
-                } catch {
-                    // Converstion to JSON failed
-                    return (req, Response(500))
+                if let jsonString = makeJSONString(dict) {
+                    return (req, Response(200, jsonString, [Header(name: "Content-Type", value: "application/json")]))
                 }
             }
             
@@ -50,30 +43,21 @@ struct Router {
             // Default the new item as not completed
             dict["completed"] = false
             
-            // Get String Representations to Store in Postgres
-            do {
-                let data = try JSONSerialization.data(withJSONObject: dict, options: .prettyPrinted)
-                if let json = String(data: data, encoding: .utf8) {
+            // Get new json string to store in postgres including new completed status
+            if let json = makeJSONString(dict) {
+                
+                // Add to database, get new id if successful
+                if let id = ToDoManager().add(json: json) {
                     
-                    // Add to Database, Check for Success
-                    if let id = ToDoManager().add(json: json) {
-                        
-                        // Prepare to return it by injecting a URL
-                        dict["url"] = "http://34.229.61.202/item/\(id)/"
-                        
-                        // Return the new object to the requester
-                        if let data = try? JSONSerialization.data(withJSONObject: dict, options: .prettyPrinted) {
-                            if let response = String(data: data, encoding: .utf8) {
-                                return(req, Response(200, response, [Header(name: "Content-Type", value: "application/json")]))
-                            }
-                        }
+                    // Prepare to return it by injecting a URL with the new id
+                    dict["url"] = "http://34.229.61.202/item/\(id)/"
+                    
+                    // Return the new object to the requester as json
+                    if let response = makeJSONString(dict) {
+                        return(req, Response(200, response, [Header(name: "Content-Type", value: "application/json")]))
                     }
-                    
                 }
-
-            } catch {
-                // Something went wrong
-                return (req, Response(500))
+                
             }
             
             // Something went wrong
@@ -144,13 +128,8 @@ struct Router {
                         newItem["title"] = title
                     }
                     
-                    let updatedItem = ToDoManager().updateItem(forID: id, withItem: newItem)
-                    
-                    // updatedIem is a touple containting (Bool, String)
-                    // the Bool represents the sucess of the update
-                    // if successful, the string is json that we can send back (the new item details)
-                    if updatedItem.0 {
-                        return (req, Response(200, updatedItem.1, [Header(name: "Content-Type", value: "application/json")]))
+                    if let updatedItem = ToDoManager().updateItem(forID: id, withItem: newItem) {
+                        return (req, Response(200, updatedItem, [Header(name: "Content-Type", value: "application/json")]))
                     }
                 }
                 

@@ -106,23 +106,20 @@ struct ToDoManager {
         return json
     }
     
-    func updateItem(forID id: Int, withItem item: [String: Any]) -> (Bool, String) {
+    func updateItem(forID id: Int, withItem item: [String: Any]) -> String? {
         
-        var success = false
-        var jsonString = ""
+        var jsonString: String? = nil
         
         do {
-            let data = try JSONSerialization.data(withJSONObject: item, options: [])
-            if let json = String(data: data, encoding: .utf8) {
+            if let json = makeJSONString(item) {
                 try PSQL().query("UPDATE items SET data = $1 WHERE id = $2", params: ["\(json)", "\(id)"])
-                success = true
                 jsonString = json
             }
         } catch {
-            success = false
+            jsonString = nil
         }
         
-        return (success, jsonString)
+        return jsonString
         
     }
     
