@@ -56,7 +56,7 @@ struct Router {
             // Get new json string to store in postgres including new completed status
             if let json = makeJSONString(dict) {
                 
-                // Add to database, get new id if successful
+                // Add to database (we get new id back if successful)
                 if let id = ToDoManager().add(json: json) {
                     
                     // Prepare to return it by injecting a URL with the new id
