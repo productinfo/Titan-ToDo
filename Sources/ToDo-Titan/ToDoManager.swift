@@ -54,7 +54,7 @@ struct ToDoManager {
                 
                 for row in result.rows() {
                     
-                    // Items Table Contains ID & JSON Data
+                    // Items will have an ID, json data that was originally stored form the initial post request
                     if let id = row["id"] as? Int, var item = row["data"] as? [String: Any] {
                         
                         // Inject id based url into item to send as JSON
@@ -82,8 +82,7 @@ struct ToDoManager {
                 
                 for row in result.rows() {
                     
-                    // Items MUST have an ID, json data that was originally stored form the initial post request, and completed value
-                    // JSON data should have at least a "title" in it
+                    // Items will have an ID, json data that was originally stored form the initial post request
                     if let id = row["id"] as? Int, var item = row["data"] as? [String: Any] {
                         
                         // Inject id based url into item to send as JSON
