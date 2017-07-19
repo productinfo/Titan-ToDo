@@ -27,7 +27,7 @@ struct Router {
         }
         
         
-        /// Accept New Items
+        /// Accept new items via post to default route
         app.post("/") { req, _ in
             
             guard var dict = req.json as? [String: Any] else {
@@ -65,7 +65,7 @@ struct Router {
         }
         
         
-        /// Delete Everything
+        /// Delete everything via delete request to default route
         app.delete("/") { req, _ in
             
             if ToDoManager().deleteAll() {
@@ -76,7 +76,7 @@ struct Router {
             return(req, Response(500))
         }
         
-        // Get Individual ToDo Items
+        // Get single todo items
         app.get("/item/*") {
             req, param, _ in
             
@@ -94,7 +94,7 @@ struct Router {
         }
         
         
-        // Update Individual Item
+        // Update individual todo items
         app.patch("/item/*") {
             req, param, _ in
             
