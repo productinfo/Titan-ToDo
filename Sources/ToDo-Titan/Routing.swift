@@ -12,6 +12,7 @@ import Foundation
 struct Router {
     func makeRoutes(_ app: Titan) {
         
+        
         /// Default route returns all items
         app.get("/") { req, _ in
             
@@ -75,6 +76,7 @@ struct Router {
             // Delete failed, send server error
             return(req, Response(500))
         }
+        
         
         // Get single todo items
         app.get("/item/*") {
