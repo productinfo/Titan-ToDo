@@ -84,10 +84,7 @@ struct ToDoManager {
                     
                     // Items MUST have an ID, json data that was originally stored form the initial post request, and completed value
                     // JSON data should have at least a "title" in it
-                    if let id = row["id"] as? Int, let data = row["data"] as? [String: Any] {
-                        
-                        //Copy item data for injection
-                        var item = data
+                    if let id = row["id"] as? Int, var item = row["data"] as? [String: Any] {
                         
                         // Inject id based url into item to send as JSON
                         item["url"] = "\(Config().hostname)/item/\(id)/"
