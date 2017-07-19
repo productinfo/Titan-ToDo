@@ -11,9 +11,16 @@ import Foundation
 
 struct Router {
     func makeRoutes(_ app: Titan) {
+        addGetAllRoute(app)
+        addAcceptNewItemsRoute(app)
+        addDeleteAllRoute(app)
+        addGetSingleToDoRoute(app)
+        addUpdateSignleItemRoute(app)
+        addDeleteSingleItemRoute(app)
+    }
+    
+    func addGetAllRoute(_ app: Titan) {
         
-        
-        /// Default route returns all items
         app.get("/") { req, _ in
             
             // Get an array of json objects representing all todo items in the database
@@ -27,8 +34,10 @@ struct Router {
             return (req, Response(500))
         }
         
+    }
+    
+    func addAcceptNewItemsRoute(_ app: Titan) {
         
-        /// Accept new items via post to default route
         app.post("/") { req, _ in
             
             guard var dict = req.json as? [String: Any] else {
@@ -65,8 +74,10 @@ struct Router {
             return (req, Response(500))
         }
         
-        
-        /// Delete everything via delete request to default route
+    }
+    
+    func addDeleteAllRoute(_ app: Titan) {
+
         app.delete("/") { req, _ in
             
             if ToDoManager().deleteAll() {
@@ -77,8 +88,10 @@ struct Router {
             return(req, Response(500))
         }
         
-        
-        // Get single todo items
+    }
+    
+    func addGetSingleToDoRoute(_ app: Titan) {
+
         app.get("/item/*") {
             req, param, _ in
             
@@ -95,8 +108,10 @@ struct Router {
             return(req, Response(400))
         }
         
-        
-        // Update individual todo items
+    }
+    
+    func addUpdateSignleItemRoute(_ app: Titan) {
+
         app.patch("/item/*") {
             req, param, _ in
             
@@ -134,8 +149,10 @@ struct Router {
             return(req, Response(400))
         }
         
+    }
+    
+    func addDeleteSingleItemRoute(_ app: Titan) {
         
-        /// Delete Individual Item
         app.delete("/item/*") {
             req, param, _ in
             
@@ -149,5 +166,6 @@ struct Router {
             //We had an invalid parametr in the url or the id provided was not a valid item, yell at the requester
             return(req, Response(400))
         }
+        
     }
 }
