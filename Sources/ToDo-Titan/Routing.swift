@@ -109,8 +109,7 @@ struct Router {
             // Make sure we have a valid ID to update
             if let id = Int(param) {
                 
-                if let originalItem = ToDoManager().getItem(forID: id) {
-                    var newItem = originalItem
+                if var newItem = ToDoManager().getItem(forID: id) {
                     
                     if let completed = dict["completed"] as? Bool {
                         newItem["completed"] = completed
