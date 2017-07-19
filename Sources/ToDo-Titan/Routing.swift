@@ -15,7 +15,7 @@ struct Router {
         addAcceptNewItemsRoute(app)
         addDeleteAllRoute(app)
         addGetSingleToDoRoute(app)
-        addUpdateSignleItemRoute(app)
+        addUpdateSingleItemRoute(app)
         addDeleteSingleItemRoute(app)
     }
     
@@ -110,7 +110,7 @@ struct Router {
         
     }
     
-    func addUpdateSignleItemRoute(_ app: Titan) {
+    func addUpdateSingleItemRoute(_ app: Titan) {
 
         app.patch("/item/*") {
             req, param, _ in
